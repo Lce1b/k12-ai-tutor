@@ -1,0 +1,85 @@
+{
+  "id": "k12-ai-2026",
+  "name": "K12人工智能通识课程体系",
+  "description": "面向小学至高中的人工智能通识教育课程大纲，覆盖6大主题模块",
+  "modules": [
+    {
+      "id": "m1",
+      "name": "AI初识与智能启蒙",
+      "icon": "🤖",
+      "description": "了解什么是人工智能，建立对AI的基本认知",
+      "lessons": [
+        {"id": "m1l1", "title": "会思考的机器——什么是人工智能", "topics": ["什么是人工智能", "AI的定义"], "suitable_grades": ["primary_low", "primary_high"]},
+        {"id": "m1l2", "title": "AI的前世今生——从图灵到ChatGPT", "topics": ["AI发展史", "图灵测试"], "suitable_grades": ["primary_high", "middle", "high"]},
+        {"id": "m1l3", "title": "身边的AI——日常生活中的智能技术", "topics": ["AI应用", "推荐系统", "语音助手"], "suitable_grades": ["primary_low", "primary_high", "middle"]},
+        {"id": "m1l4", "title": "AI的能与不能——智能的边界", "topics": ["弱AI与强AI", "AI的局限"], "suitable_grades": ["primary_high", "middle", "high"]},
+        {"id": "m1l5", "title": "智能的本质——从图灵机到涌现", "topics": ["图灵机", "计算理论", "涌现"], "suitable_grades": ["high"]}
+      ]
+    },
+    {
+      "id": "m2",
+      "name": "数据与算法的世界",
+      "icon": "📊",
+      "description": "理解数据如何驱动AI，算法如何从数据中发现规律",
+      "lessons": [
+        {"id": "m2l1", "title": "信息的小积木——什么是数据", "topics": ["数据是什么", "数据的种类"], "suitable_grades": ["primary_low", "primary_high"]},
+        {"id": "m2l2", "title": "做事的步骤——算法的奇妙世界", "topics": ["算法入门", "流程图"], "suitable_grades": ["primary_low", "primary_high"]},
+        {"id": "m2l3", "title": "排序大比拼——从冒泡到快速排序", "topics": ["排序算法", "算法效率"], "suitable_grades": ["primary_high", "middle", "high"]},
+        {"id": "m2l4", "title": "聪明的搜索——二分查找与图搜索", "topics": ["搜索算法", "BFS", "DFS"], "suitable_grades": ["middle", "high"]},
+        {"id": "m2l5", "title": "大O符号与算法效率分析", "topics": ["时间复杂度", "空间复杂度"], "suitable_grades": ["high"]}
+      ]
+    },
+    {
+      "id": "m3",
+      "name": "机器学习入门",
+      "icon": "🧠",
+      "description": "理解机器如何从数据中学习，掌握核心算法思想",
+      "lessons": [
+        {"id": "m3l1", "title": "教计算机学习——监督学习的故事", "topics": ["监督学习", "分类", "回归"], "suitable_grades": ["primary_low", "primary_high"]},
+        {"id": "m3l2", "title": "自己找规律——无监督学习的魔法", "topics": ["无监督学习", "聚类"], "suitable_grades": ["primary_high", "middle"]},
+        {"id": "m3l3", "title": "滚下山坡找答案——梯度下降的奥秘", "topics": ["梯度下降", "损失函数"], "suitable_grades": ["middle", "high"]},
+        {"id": "m3l4", "title": "决策树与随机森林——用提问做决策", "topics": ["决策树", "随机森林", "集成学习"], "suitable_grades": ["middle", "high"]},
+        {"id": "m3l5", "title": "深度学习崛起——XGBoost与表格数据", "topics": ["GBDT", "XGBoost", "表格数据"], "suitable_grades": ["high"]}
+      ]
+    },
+    {
+      "id": "m4",
+      "name": "神经网络与深度学习",
+      "icon": "🔗",
+      "description": "探索模拟大脑的计算模型，理解深度学习的核心原理",
+      "lessons": [
+        {"id": "m4l1", "title": "模仿大脑的网络——神经网络初探", "topics": ["神经网络", "神经元", "激活函数"], "suitable_grades": ["primary_low", "primary_high"]},
+        {"id": "m4l2", "title": "网络的三层结构——输入、隐藏、输出", "topics": ["神经网络结构", "前向传播"], "suitable_grades": ["primary_high", "middle"]},
+        {"id": "m4l3", "title": "让网络变深——深度学习与CNN", "topics": ["深度学习", "CNN", "卷积"], "suitable_grades": ["middle", "high"]},
+        {"id": "m4l4", "title": "注意！Transformer改变了一切", "topics": ["Transformer", "注意力机制", "BERT", "GPT"], "suitable_grades": ["high"]},
+        {"id": "m4l5", "title": "训练大模型的秘密——预训练、微调与RLHF", "topics": ["预训练", "微调", "RLHF", "DPO"], "suitable_grades": ["high"]}
+      ]
+    },
+    {
+      "id": "m5",
+      "name": "计算机视觉与自然语言处理",
+      "icon": "👁️",
+      "description": "了解AI如何看懂图像、理解语言，探索多模态前沿",
+      "lessons": [
+        {"id": "m5l1", "title": "计算机的眼睛——图像是怎么被看到的", "topics": ["像素", "颜色空间", "图像表示"], "suitable_grades": ["primary_low", "primary_high"]},
+        {"id": "m5l2", "title": "找到图中的目标——YOLO与目标检测", "topics": ["目标检测", "YOLO", "R-CNN"], "suitable_grades": ["middle", "high"]},
+        {"id": "m5l3", "title": "计算机读懂文字——从分词到Transformer", "topics": ["NLP", "分词", "词向量"], "suitable_grades": ["primary_high", "middle"]},
+        {"id": "m5l4", "title": "和AI聊天——大语言模型的原理", "topics": ["LLM", "GPT", "对话系统"], "suitable_grades": ["middle", "high"]},
+        {"id": "m5l5", "title": "生成新世界——扩散模型与AI绘画", "topics": ["扩散模型", "Stable Diffusion", "DALL-E"], "suitable_grades": ["middle", "high"]}
+      ]
+    },
+    {
+      "id": "m6",
+      "name": "AI伦理与社会责任",
+      "icon": "⚖️",
+      "description": "思考AI带来的伦理挑战和社会影响，培养负责任的AI素养",
+      "lessons": [
+        {"id": "m6l1", "title": "AI应该善良吗——人工智能伦理启蒙", "topics": ["AI伦理", "公平性"], "suitable_grades": ["primary_low", "primary_high"]},
+        {"id": "m6l2", "title": "AI会不会有偏见——算法公平初探", "topics": ["算法偏见", "公平性指标"], "suitable_grades": ["primary_high", "middle"]},
+        {"id": "m6l3", "title": "真假难辨的世界——深度伪造与信息安全", "topics": ["深度伪造", "信息安全", "隐私"], "suitable_grades": ["middle", "high"]},
+        {"id": "m6l4", "title": "AI会抢走工作吗——技术性失业与未来职业", "topics": ["AI与就业", "自动化"], "suitable_grades": ["middle", "high"]},
+        {"id": "m6l5", "title": "负责任的AI——对齐、治理与长期风险", "topics": ["AI对齐", "AI治理", "AI安全"], "suitable_grades": ["high"]}
+      ]
+    }
+  ]
+}
