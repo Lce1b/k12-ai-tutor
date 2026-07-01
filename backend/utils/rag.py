@@ -7,6 +7,7 @@ import json
 from typing import List
 
 from chromadb import PersistentClient
+from chromadb.config import Settings
 from sentence_transformers import SentenceTransformer
 
 from config import CHROMA_PATH, EMBED_MODEL
@@ -18,7 +19,7 @@ class RAGEngine:
         os.makedirs(CHROMA_PATH, exist_ok=True)
         self.chroma = PersistentClient(
             path=CHROMA_PATH,
-            settings={"hnsw:space": "cosine"},
+            settings=Settings(anonymized_telemetry=False),
         )
         self._init_collection()
 
@@ -27,7 +28,10 @@ class RAGEngine:
         try:
             self.collection = self.chroma.get_collection(name)
         except Exception:
-            self.collection = self.chroma.create_collection(name)
+            self.collection = self.chroma.create_collection(
+                name,
+                metadata={"hnsw:space": "cosine"},
+            )
             self._load_knowledge()
 
     def _load_knowledge(self):
@@ -42,11 +46,14 @@ class RAGEngine:
         idx = 0
 
         for fname in sorted(os.listdir(kb_dir)):
-            if not fname.endswith(".json"):
+            if not fname.endswith(".json") or fname == "curriculum.json":
                 continue
             path = os.path.join(kb_dir, fname)
             with open(path, "r", encoding="utf-8") as f:
                 data = json.load(f)
+
+            if not isinstance(data, list):
+                continue
 
             for item in data:
                 content = item.get("content", "")

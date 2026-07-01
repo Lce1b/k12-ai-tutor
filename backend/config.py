@@ -9,3 +9,9 @@ LLM_MODEL = os.getenv("LLM_MODEL", "gpt-4o-mini")
 
 EMBED_MODEL = os.getenv("EMBED_MODEL", "all-MiniLM-L6-v2")
 CHROMA_PATH = os.getenv("CHROMA_PATH", "./chroma_db")
+
+MYSQL_HOST = os.getenv("MYSQL_HOST", "localhost")
+MYSQL_PORT = int(os.getenv("MYSQL_PORT", "3306"))
+MYSQL_USER = os.getenv("MYSQL_USER", "root")
+MYSQL_PASSWORD = os.getenv("MYSQL_PASSWORD", "")
+MYSQL_DB = os.getenv("MYSQL_DB", "k12_tutor")

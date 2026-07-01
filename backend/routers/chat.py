@@ -24,15 +24,16 @@ from agents.coding import generate_code_example, execute_code, get_code_template
 from agents.picturebook import generate_story
 from agents.resources import generate_ppt, generate_word
 from agents.ppt_parser import extract_slides_text, process_multimodal_fallbacks, deep_parse_ppt, index_parsed_knowledge, ocr_stats
+from db import execute, fetchall, fetchone
 from utils.rag import rag
-from utils.history import record_message, record_quiz_result, get_stats, add_xp, record_streak
+from utils.history import (
+    record_message, record_quiz_result, get_stats, add_xp, record_streak,
+    ensure_session,
+)
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api", tags=["chat"])
-
-# In-memory session storage (history file is in utils/history.py)
-sessions: dict[str, list[dict]] = {}
 
 
 class ChatRequest(BaseModel):
@@ -71,7 +72,7 @@ async def greeting(session_id: str = "default", grade: str = "middle"):
     return {
         **greeting_data,
         "grade": grade,
-        "stats": get_stats(session_id),
+        "stats": await get_stats(session_id),
     }
 
 
@@ -82,7 +83,12 @@ async def handle_chat(req: ChatRequest):
     intent = await classify_intent(req.message)
     topic = extract_topic(req.message)
 
-    history = sessions.get(req.session_id, [])
+    # Load recent history from MySQL
+    db_history = await fetchall(
+        "SELECT role, content FROM messages WHERE session_id = %s ORDER BY created_at DESC LIMIT 20",
+        (req.session_id,),
+    )
+    history = [{"role": r["role"], "content": r["content"]} for r in reversed(db_history)]
 
     rag_results = rag.search(req.message, grade=req.grade, top_k=3)
     rag_context = "\n---\n".join(r["content"][:300] for r in rag_results)
@@ -146,15 +152,18 @@ async def handle_chat(req: ChatRequest):
     except Exception:
         result["next_step"] = {"message": "学得不错！还想了解什么？", "suggestions": []}
 
-    # Update session history (in-memory + persistent)
-    if req.session_id not in sessions:
-        sessions[req.session_id] = []
-    sessions[req.session_id].append({"role": "user", "content": req.message})
-    sessions[req.session_id].append({"role": "assistant", "content": result["message"][:500]})
-    if len(sessions[req.session_id]) > 40:
-        sessions[req.session_id] = sessions[req.session_id][-40:]
+    # Persist messages to MySQL
+    await ensure_session(req.session_id, req.grade)
+    await execute(
+        "INSERT INTO messages (session_id, role, content, intent, topic) VALUES (%s, %s, %s, %s, %s)",
+        (req.session_id, "user", req.message, intent.value, topic),
+    )
+    await execute(
+        "INSERT INTO messages (session_id, role, content, intent, topic) VALUES (%s, %s, %s, %s, %s)",
+        (req.session_id, "assistant", result["message"][:500], intent.value, topic),
+    )
 
-    record_message(req.session_id, req.grade, topic, intent.value)
+    await record_message(req.session_id, req.grade, topic, intent.value)
 
     return result
 
@@ -162,12 +171,12 @@ async def handle_chat(req: ChatRequest):
 @router.post("/quiz/eval")
 async def quiz_eval(req: QuizEvalRequest):
     result = await evaluate_answer(req.question, req.answer)
-    record_quiz_result(req.session_id, req.topic, result["is_correct"])
+    await record_quiz_result(req.session_id, req.topic, result["is_correct"])
 
     # Gamification: award XP and track streak
     xp_amount = 10 if result["is_correct"] else 2  # partial XP even on wrong answers
-    xp_info = add_xp(req.session_id, xp_amount)
-    streak_info = record_streak(req.session_id, result["is_correct"])
+    xp_info = await add_xp(req.session_id, xp_amount)
+    streak_info = await record_streak(req.session_id, result["is_correct"])
 
     return {
         **result,
@@ -183,18 +192,25 @@ async def code_exec(req: CodeExecRequest):
 
 @router.get("/session/{session_id}")
 async def get_session_history(session_id: str):
-    return {"history": sessions.get(session_id, []), "stats": get_stats(session_id)}
+    rows = await fetchall(
+        "SELECT role, content, intent, topic, created_at FROM messages WHERE session_id = %s ORDER BY created_at ASC LIMIT 50",
+        (session_id,),
+    )
+    return {
+        "history": [dict(r) for r in rows],
+        "stats": await get_stats(session_id),
+    }
 
 
 @router.delete("/session/{session_id}")
 async def clear_session(session_id: str):
-    sessions.pop(session_id, None)
+    await execute("DELETE FROM messages WHERE session_id = %s", (session_id,))
     return {"status": "ok"}
 
 
 @router.get("/stats/{session_id}")
 async def learning_stats(session_id: str):
-    return get_stats(session_id)
+    return await get_stats(session_id)
 
 
 # ---- Curriculum endpoint ----
@@ -264,7 +280,7 @@ async def upload_resource(
         except Exception:
             pass
 
-    record_message(session_id, grade, file.filename, "resource_upload")
+    await record_message(session_id, grade, file.filename, "resource_upload")
 
     return {
         "filename": safe_name,
@@ -392,7 +408,7 @@ async def download_ppt(req: ResourceRequest):
     """Generate and download a teaching PPT."""
     g = GradeLevel(req.grade)
     pptx_bytes = await generate_ppt(req.topic, g)
-    record_message(req.session_id, req.grade, req.topic, "resource_ppt")
+    await record_message(req.session_id, req.grade, req.topic, "resource_ppt")
     filename = f"{req.topic}_教学课件.pptx"
     return Response(
         content=pptx_bytes,
@@ -406,7 +422,7 @@ async def download_word(req: ResourceRequest):
     """Generate and download a teaching Word document."""
     g = GradeLevel(req.grade)
     docx_bytes = await generate_word(req.topic, g)
-    record_message(req.session_id, req.grade, req.topic, "resource_word")
+    await record_message(req.session_id, req.grade, req.topic, "resource_word")
     filename = f"{req.topic}_教学文档.docx"
     return Response(
         content=docx_bytes,
