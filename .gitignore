@@ -38,6 +38,9 @@ __pycache__/
 .venv/
 venv/
 
+# chromadb
+chroma_db/
+
 # IDE
 .idea/
 .vscode/
