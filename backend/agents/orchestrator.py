@@ -7,11 +7,12 @@ import json
 import re
 from enum import Enum
 
+import httpx
 from openai import AsyncOpenAI
 
 from config import LLM_API_KEY, LLM_BASE_URL, LLM_MODEL
 
-client = AsyncOpenAI(api_key=LLM_API_KEY, base_url=LLM_BASE_URL)
+client = AsyncOpenAI(api_key=LLM_API_KEY, base_url=LLM_BASE_URL, timeout=httpx.Timeout(120.0, connect=10.0))
 
 
 class Intent(str, Enum):

@@ -150,7 +150,7 @@ export default function Home() {
             ? res.quiz
             : undefined,
           code: res.code || undefined,
-          animationHtml: res.animation_html,
+          animationConfig: res.animation_config,
           story: res.story || undefined,
           timestamp: new Date(),
         };

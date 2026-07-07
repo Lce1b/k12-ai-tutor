@@ -3,12 +3,13 @@ Quiz Agent — auto-generates practice questions and evaluates answers.
 """
 
 import json
+import httpx
 from openai import AsyncOpenAI
 
 from config import LLM_API_KEY, LLM_BASE_URL, LLM_MODEL
 from agents.orchestrator import GradeLevel, build_system_prompt, Intent
 
-client = AsyncOpenAI(api_key=LLM_API_KEY, base_url=LLM_BASE_URL)
+client = AsyncOpenAI(api_key=LLM_API_KEY, base_url=LLM_BASE_URL, timeout=httpx.Timeout(120.0, connect=10.0))
 
 
 async def generate_quiz(topic: str, grade: GradeLevel, num_questions: int = 3) -> dict:

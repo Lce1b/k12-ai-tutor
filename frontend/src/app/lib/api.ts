@@ -1,4 +1,7 @@
-const API_BASE = "/api";
+// Point directly to backend to avoid Next.js proxy 60s timeout for slow endpoints (animation, etc.)
+const API_BASE = process.env.NODE_ENV === "development"
+  ? "http://localhost:8000/api"
+  : "/api";
 
 export interface ChatRequest {
   session_id: string;
@@ -43,7 +46,7 @@ export interface ChatResponse {
     expected_output: string;
     challenge: string;
   };
-  animation_html?: string;
+  animation_config?: Record<string, unknown>;  // AnimationConfig JSON
   story?: {
     title: string;
     pages: { text: string; image_prompt: string }[];

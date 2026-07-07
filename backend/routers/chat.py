@@ -79,7 +79,14 @@ async def greeting(session_id: str = "default", grade: str = "middle"):
 @router.post("/chat")
 async def handle_chat(req: ChatRequest):
     """Main chat endpoint — orchestrates between agents."""
-    grade = GradeLevel(req.grade)
+    try:
+        grade = GradeLevel(req.grade)
+    except ValueError:
+        from fastapi.responses import JSONResponse
+        return JSONResponse(
+            {"error": f"Invalid grade: {req.grade}. Valid: primary_low, primary_high, middle, high"},
+            status_code=422,
+        )
     intent = await classify_intent(req.message)
     topic = extract_topic(req.message)
 
@@ -108,10 +115,10 @@ async def handle_chat(req: ChatRequest):
             result["message"] = f"## {lesson.get('title', topic)}\n\n{lesson.get('intro', '')}"
 
         elif intent == Intent.ANIMATE:
-            html = await generate_animation(topic, grade)
+            anim_config = await generate_animation(topic, grade)
             result["type"] = "animation"
-            result["animation_html"] = html
-            result["message"] = f"我为你生成了一个讲解「{topic}」的动画，请在右侧查看~"
+            result["animation_config"] = anim_config
+            result["message"] = f"我为你生成了一个讲解「{topic}」的动画，请在下方查看~"
 
         elif intent == Intent.QUIZ:
             quiz = await generate_quiz(topic, grade)

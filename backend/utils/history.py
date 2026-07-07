@@ -6,7 +6,7 @@ import json
 import time
 from collections import Counter
 
-from db import fetchone, execute
+from db import fetchone, fetchall, execute
 
 
 async def ensure_session(session_id: str, grade: str = "middle"):

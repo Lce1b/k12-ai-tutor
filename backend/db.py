@@ -68,11 +68,22 @@ async def close_db():
 
 
 async def init_schema():
-    """Run CREATE TABLE IF NOT EXISTS on startup."""
+    """Run CREATE TABLE IF NOT EXISTS on startup.  Index errors (duplicate) are
+    harmless — they just mean the index already exists from a prior run."""
+    import logging
+    _log = logging.getLogger(__name__)
+
     schema_path = os.path.join(os.path.dirname(__file__), "schema.sql")
     with open(schema_path, "r", encoding="utf-8") as f:
         schema_sql = f.read()
     for stmt in schema_sql.split(";"):
         stmt = stmt.strip()
         if stmt and not stmt.startswith("--"):
-            await execute(stmt)
+            try:
+                await execute(stmt)
+            except Exception as e:
+                # Duplicate index / table is fine — already created
+                if "Duplicate" in str(e) or "already exists" in str(e):
+                    _log.debug("Schema statement skipped (already exists): %s", str(e)[:80])
+                else:
+                    raise

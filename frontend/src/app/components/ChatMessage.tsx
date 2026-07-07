@@ -3,6 +3,8 @@
 import MarkdownRenderer from "./MarkdownRenderer";
 import QuizCard from "./QuizCard";
 import CodeBlock from "./CodeBlock";
+import AnimationRenderer from "./animation/AnimationRenderer";
+import type { AnyAnimationConfig } from "./animation/types";
 
 export interface MessageData {
   id: string;
@@ -30,7 +32,7 @@ export interface MessageData {
     expected_output: string;
     challenge: string;
   };
-  animationHtml?: string;
+  animationConfig?: AnyAnimationConfig;
   story?: {
     title: string;
     pages: { text: string; image_prompt: string }[];
@@ -78,23 +80,9 @@ function LessonCard({ lesson }: { lesson: NonNullable<MessageData["lesson"]> }) 
   );
 }
 
-/* ---------- Animation Card ---------- */
-function AnimationCard({ html }: { html: string }) {
-  return (
-    <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
-      <div className="flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border-b border-slate-200 dark:border-slate-700">
-        <span className="text-lg">🎬</span>
-        <span className="font-semibold text-sm text-slate-700 dark:text-slate-200">动画演示</span>
-      </div>
-      <div className="animation-container p-2 flex items-center justify-center bg-slate-50 dark:bg-slate-900/30">
-        <div
-          className="w-full rounded-xl overflow-hidden"
-          style={{ maxWidth: 560, aspectRatio: "16/9" }}
-          dangerouslySetInnerHTML={{ __html: html }}
-        />
-      </div>
-    </div>
-  );
+/* ---------- Animation Card (new: config-driven) ---------- */
+function AnimationCard({ config }: { config: AnyAnimationConfig }) {
+  return <AnimationRenderer config={config} />
 }
 
 /* ---------- Picture Book Card ---------- */
@@ -203,14 +191,14 @@ export default function ChatMessage({ message, sessionId }: ChatMessageProps) {
           )}
 
           {/* Animation */}
-          {message.type === "animation" && message.animationHtml && (
+          {message.type === "animation" && message.animationConfig && (
             <div>
               {message.content && (
                 <div className="px-4 pt-3 pb-2">
                   <MarkdownRenderer content={message.content} />
                 </div>
               )}
-              <AnimationCard html={message.animationHtml} />
+              <AnimationCard config={message.animationConfig} />
             </div>
           )}
 

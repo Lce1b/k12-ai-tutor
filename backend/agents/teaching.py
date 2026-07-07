@@ -3,12 +3,13 @@ Teaching Agent — structured lesson delivery with knowledge cards.
 """
 
 import json
+import httpx
 from openai import AsyncOpenAI
 
 from config import LLM_API_KEY, LLM_BASE_URL, LLM_MODEL
 from agents.orchestrator import build_system_prompt, GradeLevel, Intent
 
-client = AsyncOpenAI(api_key=LLM_API_KEY, base_url=LLM_BASE_URL)
+client = AsyncOpenAI(api_key=LLM_API_KEY, base_url=LLM_BASE_URL, timeout=httpx.Timeout(120.0, connect=10.0))
 
 
 async def teach(
