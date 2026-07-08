@@ -133,7 +133,7 @@ export default function GradientDescentVis({ config }: Props) {
 
   return (
     <div className="flex flex-col items-center p-4">
-      <canvas ref={canvasRef} className="w-full max-w-[600px] rounded-lg" />
+      <canvas ref={canvasRef} className="w-full max-w-full rounded-lg" />
       <div className="flex gap-2 mt-3">
         <button onClick={start} className="px-4 py-1.5 text-xs rounded-lg bg-indigo-500 text-white hover:bg-indigo-600 transition-colors">▶ 开始</button>
         <button onClick={pause} className="px-4 py-1.5 text-xs rounded-lg bg-amber-500 text-white hover:bg-amber-600 transition-colors">⏸ 暂停</button>
@@ -148,6 +148,6 @@ function resizeCanvas(ref: React.RefObject<HTMLCanvasElement | null>) {
   if (!canvas) return
   const parent = canvas.parentElement
   if (!parent) return
-  canvas.width = Math.min(600, (parent.clientWidth || 600) - 32)
-  canvas.height = 380
+  canvas.width = (parent.clientWidth || 600) - 32
+  canvas.height = Math.min(420, window.innerHeight * 0.55)
 }

@@ -148,7 +148,7 @@ export default function SortingVis({ config }: Props) {
 
   return (
     <div className="flex flex-col items-center p-4">
-      <canvas ref={canvasRef} className="w-full max-w-[600px] rounded-lg" />
+      <canvas ref={canvasRef} className="w-full max-w-full rounded-lg" />
       <div className="flex items-center gap-2 mt-3">
         <button onClick={start} className="px-4 py-1.5 text-xs rounded-lg bg-indigo-500 text-white hover:bg-indigo-600 transition-colors">▶ 开始</button>
         <button onClick={pause} className="px-4 py-1.5 text-xs rounded-lg bg-amber-500 text-white hover:bg-amber-600 transition-colors">⏸ 暂停</button>

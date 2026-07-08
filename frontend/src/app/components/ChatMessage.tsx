@@ -133,8 +133,10 @@ export default function ChatMessage({ message, sessionId }: ChatMessageProps) {
         {isUser ? "我" : "AI"}
       </div>
 
-      {/* Bubble */}
-      <div className={`max-w-[85%] md:max-w-[75%] ${isUser ? "items-end" : "items-start"} flex flex-col`}>
+      {/* Bubble — tight for text, wide for animation */}
+      <div className={`${isUser ? "items-end" : "items-start"} flex flex-col ${
+        message.type === "animation" ? "w-full" : "max-w-[85%] md:max-w-[75%]"
+      }`}>
         {/* Role label */}
         <span className={`text-[11px] text-slate-400 dark:text-slate-500 mb-1 ${isUser ? "text-right" : ""}`}>
           {isUser ? "你" : "AI 助手"}
@@ -192,7 +194,7 @@ export default function ChatMessage({ message, sessionId }: ChatMessageProps) {
 
           {/* Animation */}
           {message.type === "animation" && message.animationConfig && (
-            <div>
+            <div className="w-full">
               {message.content && (
                 <div className="px-4 pt-3 pb-2">
                   <MarkdownRenderer content={message.content} />

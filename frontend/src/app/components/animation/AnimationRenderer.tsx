@@ -5,6 +5,7 @@ import GradientDescentVis from "./GradientDescentVis"
 import SortingVis from "./SortingVis"
 import DecisionTreeVis from "./DecisionTreeVis"
 import KMeansVis from "./KMeansVis"
+import GenericVis from "./GenericVis"
 import type { AnyAnimationConfig } from "./types"
 
 interface Props {
@@ -34,6 +35,7 @@ function iconFor(type: string) {
     sorting: "📊",
     decision_tree: "🌳",
     kmeans: "🎯",
+    generic: "✨"
   }
   return icons[type] ?? "🎬"
 }
@@ -61,6 +63,8 @@ function renderAnimation(config: AnyAnimationConfig) {
       return <DecisionTreeVis config={config} />
     case "kmeans":
       return <KMeansVis config={config} />
+    case "generic":
+      return <GenericVis config={config} />
     default:
       return (
         <div className="p-8 text-center text-slate-400">

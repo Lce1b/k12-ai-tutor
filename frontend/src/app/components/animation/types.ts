@@ -5,9 +5,12 @@
  */
 
 // ── Base ──
+export type AnimationType = "neural_network" | "gradient_descent" | "sorting" | "decision_tree" | "kmeans" | "generic"
+
 export interface AnimationConfig {
-  type: "neural_network" | "gradient_descent" | "sorting" | "decision_tree" | "kmeans"
+  type: AnimationType
   title?: string
+  message?: string  // hint shown when topic doesn't match perfectly
 }
 
 // ── Neural Network ──
@@ -59,9 +62,17 @@ export interface KMeansConfig extends AnimationConfig {
   iterations?: number
 }
 
+// ── Generic (fallback for non-AI topics) ──
+export interface GenericConfig extends AnimationConfig {
+  type: "generic"
+  particles?: number
+  topicText?: string
+}
+
 export type AnyAnimationConfig =
   | NeuralNetworkConfig
   | GradientDescentConfig
   | SortingConfig
   | DecisionTreeConfig
   | KMeansConfig
+  | GenericConfig

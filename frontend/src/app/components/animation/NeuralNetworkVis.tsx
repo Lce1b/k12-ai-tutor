@@ -118,7 +118,7 @@ export default function NeuralNetworkVis({ config }: Props) {
 
   return (
     <div className="flex flex-col items-center p-4">
-      <canvas ref={canvasRef} className="w-full max-w-[600px] rounded-lg" />
+      <canvas ref={canvasRef} className="w-full max-w-full rounded-lg" />
       <div className="flex gap-2 mt-3">
         <button onClick={toggle} className="px-4 py-1.5 text-xs rounded-lg bg-indigo-500 text-white hover:bg-indigo-600 transition-colors">
           {status === "running" ? "⏸ 暂停" : "▶ 开始"}
@@ -136,6 +136,6 @@ function resizeCanvas(ref: React.RefObject<HTMLCanvasElement | null>) {
   if (!canvas) return
   const parent = canvas.parentElement
   if (!parent) return
-  canvas.width = Math.min(600, parent.clientWidth - 32)
-  canvas.height = 360
+  canvas.width = parent.clientWidth - 32
+  canvas.height = Math.min(400, window.innerHeight * 0.5)
 }
